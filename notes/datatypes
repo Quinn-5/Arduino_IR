@@ -1,0 +1,18 @@
+Common Data Types (Stuff I will use)
+----------------------------------
+bool        | 1 bit
+byte        | 8 bit unsigned
+char        | >8 bit char
+int/short   | 16 bit signed int
+long        | 32 bit signed int
+float/double| 32 bit signed float
+String()    | String class
+
+Other Data Types
+----------------------------
+array    | any type
+string   | char array
+uchar    | 8 bit unsigned
+uint     | 16 bit unsigned
+ulong    | 32 bit unsigned
+word     | >16 bit unsigned
