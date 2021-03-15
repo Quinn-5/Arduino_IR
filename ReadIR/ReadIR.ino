@@ -1,15 +1,11 @@
-#define IRpin_PIN   PIND
-#define IRPin       2
+#define ReadPins    PIND    // PIN 0-7 read register
+#define IRPin       1 << 2  // Mask to read pin 2
+#define Toggle      1 << 3  // Mask to read pin 3
 
-// arrays to record IR input
-unsigned int cmd0[50];
-unsigned int cmd1[50];
-unsigned int cmd2[50];
-unsigned int cmd3[50];
-unsigned int cmd4[50];
-unsigned int cmd5[50];
-unsigned int cmd6[50];
-unsigned int cmd7[50];
+#define RESOLUTION  20
+
+// 2d array to save IR input
+unsigned int cmd[8][50][2];
 
 void setup() {
   Serial.begin(9600);
@@ -17,5 +13,39 @@ void setup() {
 }
 
 void loop() {
-  
+
+    if (ReadPins & Toggle) {
+        unsigned int highpulse = 0, lowpulse = 0;   // pulse length timings
+        unsigned int index = 0;
+        bool hasrun = false;
+
+        while (ReadPins & IRPin) {
+            highpulse++;
+            delayMicroseconds(RESOLUTION);
+
+            if (!(ReadPins & Toggle)) {
+                return;
+            }
+        }
+        cmd[0][index][0] = highpulse * RESOLUTION;
+        
+        while (!(ReadPins & Toggle)) {
+            lowpulse++;
+            delayMicroseconds(RESOLUTION);
+
+            if (!(ReadPins & Toggle)) {
+                return;
+            }
+        }
+        cmd[0][index][1] = lowpulse * RESOLUTION;
+        index++;
+
+    } else {
+        for (int i = 0; i < 50; i ++) {
+            Serial.print(cmd[0][i][0]);
+            Serial.println(cmd[0][i][1]);
+        }
+
+    }
+    
 }
