@@ -1,0 +1,48 @@
+Information gathered from: https://www.arduino.cc/en/Reference/PortManipulation
+
+For some projects, digitalRead() and digitalWrite() are too slow
+
+port registers allow for low level reading and writing of ports
+
+Ports: 
+    B - Ditital pins 8 - 13
+    C - Analog in pins
+    D - Digital pins 0 - 7
+
+3 registers per port:
+    Digital {
+        PORTD:
+            DDRD: Port D Data Direction Register - read/write
+            PORTD: Port D Data Register - read/write
+            PIND: Port D Input Pins Register - read only
+        PORTB
+            DDRB: Port B Data Direction Register - read/write
+            PORTB: Port B Data Register - read/write
+            PINB: Port B Input Pins Register - read only
+    }
+    Analog {
+        PORTC
+            DDRC: Port C Data Direction Register - read/write
+            PORTC: Port C Data Register - read/write
+            PINC: Port C Input Pins Register - read only
+    }
+
+when reading or writing, each bit of the register corresponds to one pin
+    Pin #    | 0 1 2 3 4 5 6 7 |
+    Register | 0 0 1 0 0 1 1 0 |
+                      ^
+             High and low values
+
+to set read or write ports: 
+    DDRD = B11111110;   // sets Arduino pins 1 to 7 as outputs, pin 0 as input
+    DDRD = DDRD | B11111100;  // this is safer as it sets pins 2 to 7 as outputs
+	                          // without changing the value of pins 0 & 1, which are RX & TX 
+
+to check read or write ports simply call the register
+    DDRD == B11111100
+
+to set port values
+    PORTD = B10101000; // sets digital pins 7,5,3 HIGH
+
+to read the port values at once
+    PIND == B10101000
