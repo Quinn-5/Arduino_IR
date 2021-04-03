@@ -3,9 +3,12 @@
 #define Toggle      1 << 3  // Mask to read pin 3
 
 #define RESOLUTION  20
+#define MAX_BYTE    255
 
 // 2d array to save IR input
-unsigned int cmd[100][2];
+unsigned int cmd[64][2];
+// 3d array to store multiple commands
+byte storage[5][64][2];
 
 bool hasrun = false;
 unsigned int highpulse = 0, lowpulse = 0;   // pulse length 
@@ -16,6 +19,11 @@ void setup() {
 }
 
 void loop() {
+    readIR();
+}
+
+
+void readIR() {
     unsigned int index = 0;
     
 
@@ -31,7 +39,7 @@ void loop() {
                 return;
             }
         }
-        cmd[index][0] = highpulse * RESOLUTION;
+        cmd[index][0] = highpulse;
         
         while (!(ReadPins & IRPin)) {
             lowpulse++;
@@ -41,15 +49,19 @@ void loop() {
                 return;
             }
         }
-        cmd[index][1] = lowpulse * RESOLUTION;
+        cmd[index][1] = lowpulse;
         index++;
 
     }
     if (hasrun) {
         for (int i = 0; i < 100; i ++) {
-            Serial.print(cmd[i][0]);
-            Serial.print(", ");
-            Serial.println(cmd[i][1], DEC);
+            if (cmd[i][0] < MAX_BYTE && cmd[i][1] < MAX_BYTE) {
+                storage[1][i][0] = (byte)cmd[i][0];
+                storage[1][i][1] = (byte)cmd[i][1];
+                Serial.print(cmd[i][0]);
+                Serial.print(", ");
+                Serial.println(cmd[i][1]);
+            }
             if (cmd[i][0] == 0) {
                 break;
             }
@@ -57,5 +69,8 @@ void loop() {
         Serial.println("Done!");
         hasrun = false;
     }
+}
+
+void replay() {
     
 }
