@@ -1,6 +1,7 @@
 #define ReadPins    PIND    // PIN 0-7 read register
 #define IRPin       1 << 2  // Mask to read pin 2
-#define Toggle      1 << 3  // Mask to read pin 3
+#define record      1 << 3  // Mask to read pin 3
+#define play        4       // play button pin
 
 #define RESOLUTION  20
 #define MAX_BYTE    255
@@ -19,7 +20,12 @@ void setup() {
 }
 
 void loop() {
-    readIR();
+    if (ReadPins & PIND) {
+        readIR();
+    }
+    if (digitalRead(play)) {
+        replay();
+    }
 }
 
 
@@ -27,7 +33,7 @@ void readIR() {
     unsigned int index = 0;
     
 
-    while (ReadPins & Toggle) {
+    while (ReadPins & record) {
         highpulse = 0, lowpulse = 0;
         hasrun=true;
         
@@ -35,7 +41,7 @@ void readIR() {
             highpulse++;
             delayMicroseconds(RESOLUTION);
 
-            if (!(ReadPins & Toggle)) {
+            if (!(ReadPins & record)) {
                 return;
             }
         }
@@ -45,7 +51,7 @@ void readIR() {
             lowpulse++;
             delayMicroseconds(RESOLUTION);
 
-            if (!(ReadPins & Toggle)) {
+            if (!(ReadPins & record)) {
                 return;
             }
         }
@@ -72,5 +78,5 @@ void readIR() {
 }
 
 void replay() {
-    
+    Serial.println("Play button pressed.");
 }
