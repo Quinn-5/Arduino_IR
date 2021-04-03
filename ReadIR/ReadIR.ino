@@ -5,9 +5,10 @@
 #define RESOLUTION  20
 
 // 2d array to save IR input
-unsigned int cmd[50][2];
+unsigned int cmd[100][2];
 
 bool hasrun = false;
+unsigned int highpulse = 0, lowpulse = 0;   // pulse length 
 
 void setup() {
   Serial.begin(9600);
@@ -16,11 +17,12 @@ void setup() {
 
 void loop() {
     unsigned int index = 0;
+    
 
     while (ReadPins & Toggle) {
-    unsigned int highpulse = 0, lowpulse = 0;   // pulse length timings
-        hasrun = true;
-
+        highpulse = 0, lowpulse = 0;
+        hasrun=true;
+        
         while (ReadPins & IRPin) {
             highpulse++;
             delayMicroseconds(RESOLUTION);
@@ -44,11 +46,15 @@ void loop() {
 
     }
     if (hasrun) {
-        for (int i = 0; i < 50; i ++) {
+        for (int i = 0; i < 100; i ++) {
             Serial.print(cmd[i][0]);
             Serial.print(", ");
             Serial.println(cmd[i][1], DEC);
+            if (cmd[i][0] == 0) {
+                break;
+            }
         }
+        Serial.println("Done!");
         hasrun = false;
     }
     
