@@ -61,7 +61,7 @@ void readIR() {
             index++;
         }
         if (hasrun) {
-            for (int i = 1; i < CMD_SIZE; i ++) {
+            for (int i = 0; i < CMD_SIZE; i ++) {
                 storage[0][i-1][0] = cmd[i][0];
                 storage[0][i-1][1] = cmd[i][1];
                 if (cmd[i][0] == 0) {
@@ -84,7 +84,7 @@ void replay() {
     long microsecs;
     //cli();
     for (int i = 0; i < CMD_SIZE; i++) {
-        microsecs = storage[0][i][1] * RESOLUTION;
+        microsecs = (storage[0][i][1] * RESOLUTION);
         while (microsecs > 0) {
             //int a = micros();
             digitalWrite(ledPin, HIGH);
