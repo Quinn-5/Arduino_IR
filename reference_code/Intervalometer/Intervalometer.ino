@@ -10,7 +10,7 @@
       // initialize the IR digital pin as an output:
       pinMode(IRledPin, OUTPUT);      
      
-      // Serial.begin(9600);
+      Serial.begin(9600);
     }
      
     void loop()                     
@@ -28,6 +28,8 @@
       // we'll count down from the number of microseconds we are told to wait
      
       cli();  // this turns off any background interrupts
+      
+      long a = micros();
      
       while (microsecs > 0) {
         // 38 kHz is about 13 microseconds high and 13 microseconds low
@@ -39,6 +41,9 @@
        // so 26 microseconds altogether
        microsecs -= 26;
       }
+
+      long b = micros();
+      Serial.println(b-a);
      
       sei();  // this turns them back on
     }

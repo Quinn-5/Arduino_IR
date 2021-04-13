@@ -11,7 +11,7 @@
 // 2d array to save IR input
 unsigned int cmd[CMD_SIZE][2];
 // 3d array to store multiple commands
-unsigned int storage[2][CMD_SIZE][2];
+unsigned int storage[1][CMD_SIZE][2];
 
 bool hasrun = false;
 unsigned int highpulse = 0, lowpulse = 0;   // pulse length 
@@ -19,6 +19,7 @@ unsigned int highpulse = 0, lowpulse = 0;   // pulse length
 void setup() {
     Serial.begin(9600);
     Serial.println("Ready to decode IR!");
+    pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
@@ -62,8 +63,8 @@ void readIR() {
         }
         if (hasrun) {
             for (int i = 0; i < CMD_SIZE; i ++) {
-                storage[0][i-1][0] = cmd[i][0];
-                storage[0][i-1][1] = cmd[i][1];
+                storage[0][i][0] = cmd[i][0];
+                storage[0][i][1] = cmd[i][1];
                 if (cmd[i][0] == 0) {
                     break;
                 }            
@@ -81,23 +82,30 @@ void readIR() {
 }
 
 void replay() {
+    cli();
     long microsecs;
-    //cli();
+    //unsigned long a, b;
     for (int i = 0; i < CMD_SIZE; i++) {
-        microsecs = (storage[0][i][1] * RESOLUTION);
+        delayMicroseconds(storage[0][i][0] * RESOLUTION);
+        //Serial.print("expected: ");
+        //Serial.println(storage[0][i][1] * RESOLUTION + storage[0][i][0] * RESOLUTION);
+        //a = micros();
+        microsecs = storage[0][i][1] * RESOLUTION;
         while (microsecs > 0) {
-            //int a = micros();
             digitalWrite(ledPin, HIGH);
-            delayMicroseconds(10);
+            delayMicroseconds(9);
             digitalWrite(ledPin, LOW);
-            delayMicroseconds(10);
-            //int b = micros();
-            //b -= a;
-            //Serial.println(b);
+            delayMicroseconds(8);
             //number of microseconds in 38KHz pulse
             microsecs -= 26;
         }
-        delayMicroseconds(storage[0][i][0] * RESOLUTION);
+        //b = micros();
+        
+        //Serial.print("actual: ");
+        //Serial.println(b-a);
+        
     }
-    //sei();
+    sei();
+    delay(100);
 }
+    
