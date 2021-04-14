@@ -1,8 +1,9 @@
 #define ReadPins    PIND    // PIN 0-7 read register
 #define IRPin       1 << 2  // Mask to read pin 2
 #define record      1 << 3  // Mask to read pin 3
-#define play        4       // play button pin
-#define ledPin      5       // IR LED pin
+#define play1       4       // play button pin 1
+#define play2       5       // play button pin 2
+#define ledPin      6       // IR LED pin
 
 #define RESOLUTION  20
 #define MAX_BYTE    255
@@ -11,31 +12,38 @@
 // 2d array to save IR input
 unsigned int cmd[CMD_SIZE][2];
 // 3d array to store multiple commands
-unsigned int storage[1][CMD_SIZE][2];
+unsigned int storage[2][CMD_SIZE][2];
 
 bool hasrun = false;
-unsigned int highpulse = 0, lowpulse = 0;   // pulse length 
+unsigned int highpulse, lowpulse;   // pulse length 
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("Ready to decode IR!");
+    Serial.println("Ready.");
     pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
-    if (ReadPins & record) {
-        readIR();
-    } else if (digitalRead(play)) {
-        replay();
+    int index;
+    if(digitalRead(play1))
+        index = 0;
+    else if (digitalRead(play2))
+        index = 1;
+    
+        
+    
+    if ((ReadPins & record) && index+1) {
+        readIR(index);
+    } else if ((digitalRead(play1) || digitalRead(play2)) && index+1) {
+        replay(index);
     }
 }
 
-
-void readIR() {
+//  Code to record IR
+void readIR(int saveSlot) {
     while (true) {
         unsigned int index = 0;
     
-
         while (ReadPins & record) {
             highpulse = 0, lowpulse = 0;
             hasrun=true;
@@ -63,14 +71,14 @@ void readIR() {
         }
         if (hasrun) {
             for (int i = 0; i < CMD_SIZE; i ++) {
-                storage[0][i][0] = cmd[i][0];
-                storage[0][i][1] = cmd[i][1];
+                storage[saveSlot][i][0] = cmd[i][0];
+                storage[saveSlot][i][1] = cmd[i][1];
                 if (cmd[i][0] == 0) {
                     break;
                 }            
-                Serial.print(storage[0][i-1][0] * RESOLUTION);
+                Serial.print(storage[saveSlot][i][0] * RESOLUTION);
                 Serial.print(", ");
-                Serial.println(storage[0][i-1][1] * RESOLUTION);
+                Serial.println(storage[saveSlot][i][1] * RESOLUTION);
                 
                 cmd[i][0] = 0;
                 cmd[i][1] = 0;
@@ -81,31 +89,25 @@ void readIR() {
     }
 }
 
-void replay() {
-    cli();
+void replay(int saveSlot) {
+    noInterrupts();
     long microsecs;
-    //unsigned long a, b;
     for (int i = 0; i < CMD_SIZE; i++) {
-        delayMicroseconds(storage[0][i][0] * RESOLUTION);
-        //Serial.print("expected: ");
-        //Serial.println(storage[0][i][1] * RESOLUTION + storage[0][i][0] * RESOLUTION);
-        //a = micros();
-        microsecs = storage[0][i][1] * RESOLUTION;
+        delayMicroseconds(storage[saveSlot][i][0] * RESOLUTION);
+        microsecs = storage[saveSlot][i][1] * RESOLUTION;
         while (microsecs > 0) {
+            //  Measured this to be closest to 38kHz via oscilloscope
             digitalWrite(ledPin, HIGH);
             delayMicroseconds(9);
             digitalWrite(ledPin, LOW);
             delayMicroseconds(8);
-            //number of microseconds in 38KHz pulse
+            
+            //number of microseconds in 38kHz pulse
             microsecs -= 26;
         }
-        //b = micros();
-        
-        //Serial.print("actual: ");
-        //Serial.println(b-a);
-        
     }
-    sei();
+    interrupts();
+    //  typical delay between signals measured from remote
     delay(100);
 }
     
