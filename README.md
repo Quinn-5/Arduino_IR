@@ -12,7 +12,10 @@ Before anything else, the Arduino has to receive a signal. This is received as a
 
 ### Output
 ![](https://cdn.discordapp.com/attachments/522123076037640197/832021323633917972/image1.jpg)
-The IR LED more or less plays back exactly what was recorded by the receiver. However, the logical high state, rather than constantly on, modulates the LED on and off at around 38kHz. This tells the receiving device to listen to the signal, rather than ignoring it as background noise. It also helps keep the LED from burning out. The pulses on the output LED were also adjusted according to readings on an oscilloscope. 
+The IR LED more or less plays back exactly what was recorded by the receiver. However, the logical high state, rather than constantly on, modulates the LED on and off at around 38kHz. This tells the receiving device to listen to the signal, rather than ignoring it as background noise. It also helps keep the LED from burning out. The pulses on the output LED were also adjusted according to readings on an oscilloscope.
+
+![](https://cdn.discordapp.com/attachments/522123076037640197/832369302040477796/image0.jpg)
+To help visualize, this is a comparison between the pulsed signal (bottom) and the perceived code (top).
 
 ### Controls
 ![](https://cdn.discordapp.com/attachments/522123076037640197/832021324452462642/image3.jpg)
