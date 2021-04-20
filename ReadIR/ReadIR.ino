@@ -1,13 +1,14 @@
 #define ReadPins    PIND    // PIN 0-7 read register
-#define IRPin       1 << 2  // Mask to read pin 2
-#define record      1 << 3  // Mask to read pin 3
-#define play1       4       // play button pin 1
-#define play2       5       // play button pin 2
-#define ledPin      6       // IR LED pin
 
-#define RESOLUTION  20
-#define MAX_BYTE    255
-#define CMD_SIZE    64
+const byte IRPin = 1 << 2;  // Mask to read pin 2
+const byte record = 1 << 3;  // Mask to read pin 3
+const int play1 = 4;      // play button pin 1
+const int play2 = 5;       // play button pin 2
+const int ledPin = 6;       // IR LED pin
+
+const int RESOLUTION = 20;
+const int MAX_BYTE = 255;
+const int CMD_SIZE = 64;
 
 // 2d array to save IR input
 unsigned int cmd[CMD_SIZE][2];
