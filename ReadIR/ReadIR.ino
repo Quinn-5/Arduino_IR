@@ -24,7 +24,7 @@ void setup() {
 }
 
 void loop() {
-    int index;
+    int index = -1;
     if(digitalRead(play1))
         index = 0;
     else if (digitalRead(play2))
